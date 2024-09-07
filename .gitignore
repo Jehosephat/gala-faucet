@@ -1,6 +1,6 @@
 # Dependencies
 */node_modules/
-frontend/node_modules/
+gala-faucet-frontend/node_modules/
 gala-faucet-backend/node_modules/
 npm-debug.log
 yarn-error.log
@@ -13,6 +13,8 @@ build/
 .env
 .env.local
 .env.*.local
+gala-faucet-frontend/.env
+gala-faucet-backend/.env
 
 # IDE and editor files
 .vscode/
@@ -38,6 +40,14 @@ temp/
 
 # NestJS specific
 nest-cli.json
+
+# Vue specific
+.nuxt
+.nitro
+.cache
+.output
+.env
+dist
 
 # Gala Chain specific (if needed)
 # Add any Gala Chain specific files or directories to ignore
