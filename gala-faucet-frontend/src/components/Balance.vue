@@ -23,6 +23,7 @@ const fetchBalance = async () => {
       params: { walletAddress: walletAddress.value }
     })
     balance.value = response.data
+    console.log('Balance fetched:', balance.value) // Add this line for debugging
   } catch (error) {
     console.error('Error fetching balance:', error)
   }
