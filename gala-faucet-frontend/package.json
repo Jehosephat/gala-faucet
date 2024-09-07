@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@gala-chain/connect": "^1.4.1",
     "axios": "^0.27.2",
     "vue": "^3.3.4"
   },
