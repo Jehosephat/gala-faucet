@@ -1,0 +1,43 @@
+# Dependencies
+*/node_modules/
+frontend/node_modules/
+gala-faucet-backend/node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+logs
+*.log
+
+# Testing
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# Miscellaneous
+.cache/
+.npm/
+
+# NestJS specific
+nest-cli.json
+
+# Gala Chain specific (if needed)
+# Add any Gala Chain specific files or directories to ignore
