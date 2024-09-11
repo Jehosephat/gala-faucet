@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+import { BurnTokensDto } from '@gala-chain/api';
 
 @Controller()
 export class AppController {
@@ -11,17 +12,7 @@ export class AppController {
   }
 
   @Post('burnMainnetGala')
-  async burnMainnetGala(
-    @Body() body: { 
-      amount: string, 
-      signature: string, 
-      signerPublicKey: string 
-    }
-  ): Promise<boolean> {
-    return this.appService.burnMainnetGala(
-      body.amount,
-      body.signature,
-      body.signerPublicKey
-    );
+  async burnMainnetGala(@Body() signedDto: any): Promise<boolean> {
+    return this.appService.burnMainnetGala(signedDto);
   }
 }

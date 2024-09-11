@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { BurnTokensDto } from '@gala-chain/api';
 
 @Injectable()
 export class AppService {
@@ -27,24 +28,17 @@ export class AppService {
     }
   }
 
-  async burnMainnetGala(amount: string, signature: string, signerPublicKey: string): Promise<boolean> {
+  async burnMainnetGala(signedDto: any): Promise<boolean> {
     try {
-      const response = await axios.post(`${this.apiBaseUrl}/galachain/api/asset/token-contract/BurnTokens`, {
-        signature,
-        signerPublicKey,
-        uniqueKey: `testnet-faucet-burn-${Date.now()}`,
-        tokenInstances: [],
-        items: {
-          quantity: amount,
-          tokenInstanceKey: {
-            collection: 'GALA',
-            category: 'Unit',
-            type: 'none',
-            additionalKey: 'none',
-            instance: '0'
-          }
-        }
-      }, {
+      const strippedDto = {
+        prefix: signedDto.prefix,
+        signature: signedDto.signature,
+        uniqueKey: signedDto.uniqueKey,
+        tokenInstances: signedDto.tokenInstances,
+        owner: signedDto.owner
+      }
+      const response = await axios.post(`${this.apiBaseUrl}/galachain/api/asset/token-contract/BurnTokens`, 
+        strippedDto, {
         headers: {
           'Content-Type': 'application/json'
         }
