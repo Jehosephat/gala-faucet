@@ -2,18 +2,21 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { BurnTokensDto } from '@gala-chain/api';
+import { serialize } from "@gala-chain/api";
 
 @Injectable()
 export class AppService {
-  private readonly apiBaseUrl: string;
+  private readonly galaswapApiBaseUrl: string;
+  private readonly chainApiBaseUrl: string;
 
   constructor(private configService: ConfigService) {
-    this.apiBaseUrl = this.configService.get<string>('API_BASE_URL');
+    this.galaswapApiBaseUrl = this.configService.get<string>('GALASWAP_API_BASE_URL');
+    this.chainApiBaseUrl = this.configService.get<string>('CHAIN_API_BASE_URL');
   }
 
   async getBalance(walletAddress: string): Promise<number> {
     try {
-      const response = await axios.post(`${this.apiBaseUrl}/galachain/api/asset/token-contract/FetchBalances`, {
+      const response = await axios.post(`${this.galaswapApiBaseUrl}/galachain/api/asset/token-contract/FetchBalances`, {
         owner: walletAddress
       });
 
@@ -30,15 +33,8 @@ export class AppService {
 
   async burnMainnetGala(signedDto: any): Promise<boolean> {
     try {
-      const strippedDto = {
-        prefix: signedDto.prefix,
-        signature: signedDto.signature,
-        uniqueKey: signedDto.uniqueKey,
-        tokenInstances: signedDto.tokenInstances,
-        owner: signedDto.owner
-      }
-      const response = await axios.post(`${this.apiBaseUrl}/galachain/api/asset/token-contract/BurnTokens`, 
-        strippedDto, {
+      const response = await axios.post(`${this.chainApiBaseUrl}/api/asset/token-contract/BurnTokens`, 
+        signedDto, {
         headers: {
           'Content-Type': 'application/json'
         }
