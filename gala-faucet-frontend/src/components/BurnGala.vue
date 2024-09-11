@@ -28,6 +28,7 @@ const burnGala = async () => {
 	} else {
 		try {
 			const burnTokensDto = { 
+				owner: `eth|${props.metamaskClient.getWalletAddress.slice(2)}`,
 				tokenInstances: [{
 					quantity: amount.value,
 					tokenInstanceKey: {
