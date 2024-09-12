@@ -73,3 +73,28 @@ onMounted(async () => {
 
 defineExpose({ isConnected, metamaskClient, fetchBalance })
 </script>
+
+<style scoped>
+.wallet-info {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.wallet-address {
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.balance {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.error {
+  color: #ff4d4d;
+  margin-top: 10px;
+}
+</style>

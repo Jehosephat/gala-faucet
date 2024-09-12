@@ -56,3 +56,31 @@ const burnGala = async () => {
 	}
 }
 </script>
+
+<style scoped>
+.burn-gala {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+button {
+  width: 100%;
+}
+
+.burn-message {
+  margin-top: 15px;
+  font-weight: bold;
+}
+</style>
