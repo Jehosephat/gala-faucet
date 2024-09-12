@@ -14,8 +14,7 @@ import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import { MetamaskConnectClient } from '@gala-chain/connect'
 
-const metamaskClient = new MetamaskConnectClient(`${import.meta.env.VITE_APP_API_URL}`);
-
+const metamaskClient = new MetamaskConnectClient();
 const balance = ref<number | null>(null)
 const walletAddress = ref('')
 const error = ref('')
@@ -32,6 +31,7 @@ const connectWallet = async () => {
     walletAddress.value = address
     isConnected.value = true
     error.value = ''
+    await fetchBalance()
   } catch (err) {
     console.error('Error connecting wallet:', err)
     error.value = 'Failed to connect wallet. Please try again.'
@@ -64,11 +64,12 @@ onMounted(async () => {
     if (address) {
       walletAddress.value = address
       isConnected.value = true
+      await fetchBalance()
     }
   } catch (err) {
     console.error('No wallet connected on mount:', err)
   }
 })
 
-defineExpose({ isConnected, metamaskClient })
+defineExpose({ isConnected, metamaskClient, fetchBalance })
 </script>

@@ -11,13 +11,13 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { MetamaskConnectClient } from '@gala-chain/connect'
-import { BurnTokenQuantity, BurnTokensDto, ChainCallDTO, createValidDTO, TokenInstanceKey } from '@gala-chain/api';
-import BigNumber from 'bignumber.js';
 
 const props = defineProps<{
   isConnected: boolean
   metamaskClient: MetamaskConnectClient | null
 }>()
+
+const emit = defineEmits(['burnSuccess'])
 
 const amount = ref('')
 const burnMessage = ref('')
@@ -47,6 +47,7 @@ const burnGala = async () => {
 			console.log("Signed", signedDto)
 			const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}/burnMainnetGala`, signedDto)
 			burnMessage.value = `Successfully burned ${amount.value} GALA`
+			emit('burnSuccess')
 			amount.value = ''
 		} catch (error) {
 			console.error('Error burning GALA:', error)
