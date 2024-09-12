@@ -1,96 +1,64 @@
 <template>
-  <div>
-    <button @click="connectWallet" v-if="!isConnected">Connect Wallet</button>
-    <div v-else>
-      <p>Connected Wallet: {{ walletAddress }}</p>
-      <p>Balance: {{ balance }} GALA</p>
-    </div>
-    <p v-if="error">{{ error }}</p>
+  <div class="balance">
+    <h3>{{ networkName }} Balance</h3>
+    <p class="balance-amount">{{ balance }} GALA</p>
+    <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import axios from 'axios'
-import { MetamaskConnectClient } from '@gala-chain/connect'
 
-const metamaskClient = new MetamaskConnectClient();
+const props = defineProps<{
+  network: 'mainnet' | 'testnet'
+  walletAddress: string
+}>()
+
 const balance = ref<number | null>(null)
-const walletAddress = ref('')
 const error = ref('')
-const isConnected = ref(false)
 
-const connectWallet = async () => {
-  try {
-    await metamaskClient.connect()
-    let address = metamaskClient.getWalletAddress
-    if (address.startsWith('0x')) {
-      address = "eth|" + address.slice(2)
-    }
-    // TODO: register address if not found (getPublicKey)?
-    walletAddress.value = address
-    isConnected.value = true
-    error.value = ''
-    await fetchBalance()
-  } catch (err) {
-    console.error('Error connecting wallet:', err)
-    error.value = 'Failed to connect wallet. Please try again.'
-  }
-}
+const networkName = computed(() => props.network === 'mainnet' ? 'Mainnet' : 'Testnet')
 
 const fetchBalance = async () => {
+  if (!props.walletAddress) return
+
   try {
     error.value = ''
     const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/getBalance`, {
-      params: { walletAddress: walletAddress.value }
+      params: { walletAddress: props.walletAddress, network: props.network }
     })
     balance.value = response.data
   } catch (err) {
-    console.error('Error fetching balance:', err)
-    error.value = 'Error fetching balance. Please try again.'
+    console.error(`Error fetching ${props.network} balance:`, err)
+    error.value = `Error fetching ${props.network} balance. Please try again.`
     balance.value = null
   }
 }
 
-watch(isConnected, (newValue) => {
-  if (newValue) {
-    fetchBalance()
-  }
-})
+watch(() => props.walletAddress, fetchBalance)
 
-onMounted(async () => {
-  try {
-    const address = metamaskClient.getWalletAddress
-    if (address) {
-      walletAddress.value = address
-      isConnected.value = true
-      await fetchBalance()
-    }
-  } catch (err) {
-    console.error('No wallet connected on mount:', err)
-  }
-})
+onMounted(fetchBalance)
 
-defineExpose({ isConnected, metamaskClient, fetchBalance })
+defineExpose({ fetchBalance })
 </script>
 
 <style scoped>
-.wallet-info {
+.balance {
   background-color: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   padding: 20px;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.wallet-address {
-  font-size: 0.9em;
-  color: rgba(255, 255, 255, 0.7);
+h3 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
 }
 
-.balance {
+.balance-amount {
   font-size: 1.5em;
   font-weight: bold;
-  margin-top: 10px;
 }
 
 .error {

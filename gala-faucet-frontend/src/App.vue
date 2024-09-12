@@ -4,24 +4,37 @@
       <h1>Gala Faucet</h1>
     </header>
     <main>
-      <Balance ref="balanceComponent" />
-      <BurnGala :is-connected="isWalletConnected" :metamask-client="metamaskClient" @burn-success="handleBurnSuccess" />
+      <WalletConnect ref="walletConnectComponent" />
+      <div v-if="isWalletConnected" class="balances">
+        <Balance network="mainnet" :wallet-address="walletAddress" ref="mainnetBalanceComponent" />
+        <Balance network="testnet" :wallet-address="walletAddress" ref="testnetBalanceComponent" />
+      </div>
+      <BurnGala 
+        :is-connected="isWalletConnected" 
+        :metamask-client="metamaskClient" 
+        @burn-success="handleBurnSuccess" 
+      />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import WalletConnect from './components/WalletConnect.vue'
 import Balance from './components/Balance.vue'
 import BurnGala from './components/BurnGala.vue'
-import { MetamaskConnectClient } from '@gala-chain/connect'
 
-const balanceComponent = ref<InstanceType<typeof Balance> | null>(null)
-const isWalletConnected = computed(() => balanceComponent.value?.isConnected ?? false)
-const metamaskClient = computed(() => balanceComponent.value?.metamaskClient ?? null)
+const walletConnectComponent = ref<InstanceType<typeof WalletConnect> | null>(null)
+const mainnetBalanceComponent = ref<InstanceType<typeof Balance> | null>(null)
+const testnetBalanceComponent = ref<InstanceType<typeof Balance> | null>(null)
+
+const isWalletConnected = computed(() => walletConnectComponent.value?.isConnected ?? false)
+const metamaskClient = computed(() => walletConnectComponent.value?.metamaskClient ?? null)
+const walletAddress = computed(() => walletConnectComponent.value?.walletAddress ?? '')
 
 const handleBurnSuccess = () => {
-  balanceComponent.value?.fetchBalance()
+  mainnetBalanceComponent.value?.fetchBalance()
+  testnetBalanceComponent.value?.fetchBalance()
 }
 </script>
 
@@ -46,6 +59,11 @@ h1 {
 main {
   display: flex;
   flex-direction: column;
+}
+
+.balances {
+  display: flex;
+  justify-content: space-between;
   gap: 20px;
 }
 </style>

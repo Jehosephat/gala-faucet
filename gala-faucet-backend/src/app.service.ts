@@ -10,21 +10,22 @@ const ecSecp256k1 = new EC('secp256k1');
 
 @Injectable()
 export class AppService {
-  private readonly galaswapApiBaseUrl: string;
-  private readonly chainApiBaseUrl: string;
+  private readonly chainTestnetApiBaseUrl: string;
+  private readonly chainMainnetApiBaseUrl: string;
   private readonly faucetMultiplier: string;
   private readonly faucetAdminPrivateKey: string;
 
   constructor(private configService: ConfigService) {
-    this.galaswapApiBaseUrl = this.configService.get<string>('GALASWAP_API_BASE_URL');
-    this.chainApiBaseUrl = this.configService.get<string>('CHAIN_API_BASE_URL');
+    this.chainTestnetApiBaseUrl = this.configService.get<string>('CHAIN_TESTNET_API_BASE_URL');
+    this.chainMainnetApiBaseUrl = this.configService.get<string>('CHAIN_MAINNET_API_BASE_URL');
     this.faucetMultiplier = this.configService.get<string>('FAUCET_MULTIPLIER');
     this.faucetAdminPrivateKey = this.configService.get<string>('FAUCET_ADMIN_PRIVATE_KEY');
   }
 
-  async getBalance(walletAddress: string): Promise<number> {
+  async getBalance(walletAddress: string, isMainnet: boolean): Promise<number> {
     try {
-      const response = await axios.post(`${this.galaswapApiBaseUrl}/galachain/api/asset/token-contract/FetchBalances`, {
+      const apiBaseUrl = isMainnet ? this.chainMainnetApiBaseUrl : this.chainTestnetApiBaseUrl;
+      const response = await axios.post(`${apiBaseUrl}/api/asset/token-contract/FetchBalances`, {
         owner: walletAddress
       });
 
@@ -41,7 +42,7 @@ export class AppService {
 
   async burnMainnetGala(signedDto: any): Promise<boolean> {
     try {
-      const response = await axios.post(`${this.chainApiBaseUrl}/api/asset/token-contract/BurnTokens`, 
+      const response = await axios.post(`${this.chainMainnetApiBaseUrl}/api/asset/token-contract/BurnTokens`, 
         signedDto, {
         headers: {
           'Content-Type': 'application/json'
@@ -81,14 +82,14 @@ export class AppService {
 
   async mintTestnetGala(signedDto: any): Promise<boolean> {
     try {
-      const response = await axios.post(`${this.chainApiBaseUrl}/api/asset/token-contract/MintToken`, 
+      const response = await axios.post(`${this.chainTestnetApiBaseUrl}/api/asset/token-contract/MintToken`, 
         signedDto, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
-      return response.status === 200;
+      return response.status === 200 || response.status === 201;
     } catch (error) {
       console.error('Error minting testnet GALA:', error);
       throw error;

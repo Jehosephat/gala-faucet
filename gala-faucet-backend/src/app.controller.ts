@@ -7,8 +7,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('getBalance')
-  async getBalance(@Query('walletAddress') walletAddress: string): Promise<number> {
-    return this.appService.getBalance(walletAddress);
+  async getBalance(@Query('walletAddress') walletAddress: string, @Query('isMainnet') isMainnet: boolean): Promise<number> {
+    return this.appService.getBalance(walletAddress, isMainnet);
   }
 
   @Post('burnMainnetGala')

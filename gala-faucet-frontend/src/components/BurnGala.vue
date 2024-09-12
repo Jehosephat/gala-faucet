@@ -44,7 +44,7 @@ const burnGala = async () => {
 
 			const signedDto = await props.metamaskClient.sign("BurnTokens", burnTokensDto)
 
-			console.log("Signed", signedDto)
+			// console.log("Signed", signedDto)
 			const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}/burnMainnetGala`, signedDto)
 			burnMessage.value = `Successfully burned ${amount.value} GALA`
 			emit('burnSuccess')
