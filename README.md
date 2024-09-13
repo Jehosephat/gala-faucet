@@ -1,49 +1,23 @@
-# gala-faucet
-Lightweight app that allows users to burn GALA tokens on mainnet in order to get GALA tokens on testnet
+# Gala Faucet
 
-## Setup and Installation
+A lightweight application that allows users to burn GALA tokens on mainnet in order to receive GALA tokens on testnet.
 
-### Prerequisites
+## Project Structure
+
+This project consists of a single frontend application built with Vue.js and Vite.
+
+## Prerequisites
+
 - Node.js (v14 or later)
 - npm or yarn
 - Git
 
-### Clone the repository
-    ```bash
-    git clone https://github.com/your-username/gala-faucet.git
-    cd gala-faucet
-    ```
+## Setup and Installation
 
-### Backend Setup
-1. Navigate to the backend directory:
+1. Clone the repository:
    ```bash
-   cd gala-faucet-backend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Create a `.env` file in the `gala-faucet-backend` directory with the following content:
-   ```
-    CHAIN_TESTNET_API_BASE_URL=https://int-galachain-gateway-chain-platform-stage-chain-platform-eks.stage.galachain.com
-    CHAIN_MAINNET_API_BASE_URL=https://int-galachain-gateway-chain-platform-stage-chain-platform-eks.stage.galachain.com
-    FAUCET_MULTIPLIER=100
-    FRONTEND_URL=http://localhost:3000
-    FAUCET_ADMIN_PRIVATE_KEY=0x...
-   ```
-   Replace the placeholders with your actual values.
-
-4. Start the backend server:
-   ```bash
-   npm run start:dev
-   ```
-
-### Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd gala-faucet-frontend
+   git clone https://github.com/jehosephat/gala-faucet.git
+   cd gala-faucet
    ```
 
 2. Install dependencies:
@@ -53,8 +27,12 @@ Lightweight app that allows users to burn GALA tokens on mainnet in order to get
 
 3. Create a `.env` file in the `gala-faucet-frontend` directory with the following content:
    ```
-    VITE_APP_API_URL=http://localhost:3001
+   VITE_MAINNET_API=https://galachain-gateway-chain-platform-stage-chain-platform-eks.stage.galachain.com
+   VITE_TESTNET_API=https://galachain-gateway-chain-platform-stage-chain-platform-eks.stage.galachain.com
+   VITE_FAUCET_MULTIPLIER=100
+   VITE_FAUCET_ADMIN_PRIVATE_KEY=0x0000000000000000000000000000000000000000000000000000000000000001
    ```
+   Replace the placeholders with your actual values.
 
 4. Start the frontend development server:
    ```bash
@@ -62,27 +40,21 @@ Lightweight app that allows users to burn GALA tokens on mainnet in order to get
    ```
 
 ## Usage
-1. Open your browser and navigate to `http://localhost:3001` (or the port specified by Vite).
+
+1. Open your browser and navigate to `http://localhost:3000` (or the port specified by Vite).
 2. Connect your wallet using the "Connect Wallet" button.
-3. Enter the amount of GALA tokens you want to burn on mainnet.
-4. Click "Burn GALA" to initiate the transaction.
-5. Once the transaction is confirmed, you'll receive an amount of GALA tokens on the testnet equal to the amount of GALA tokens you burned on mainnet times the multiplier set in the .env file.
+3. Once connected, you'll see your GALA balance on both mainnet and testnet.
+4. Enter the amount of GALA tokens you want to burn on mainnet.
+5. Click "Burn GALA" to initiate the transaction.
+6. Once the transaction is confirmed, you'll receive an amount of GALA tokens on the testnet equal to the amount of GALA tokens you burned on mainnet times the multiplier set in the .env file.
 
 ## Modifying the Application
 
-### Backend
-- The main service logic is located in `gala-faucet-backend/src/app.service.ts`.
-- To modify the API endpoints, edit `gala-faucet-backend/src/app.controller.ts`.
-- Add new dependencies in `gala-faucet-backend/package.json`.
+- The main application component is in `src/App.vue`.
+- Individual components are located in `src/components/`:
+  - `WalletConnect.vue`: Handles wallet connection
+  - `Balance.vue`: Displays GALA balance for mainnet and testnet
+  - `BurnGala.vue`: Handles the burning and minting process
+- Environment variables are defined in the `.env` file and typed in `src/env.d.ts`.
+- The Vite configuration is in `vite.config.js`.
 
-### Frontend
-- The main application component is in `gala-faucet-frontend/src/App.vue`.
-- Individual components are located in `gala-faucet-frontend/src/components/`.
-- To modify the Wallet interactions, edit `BurnGala.vue` and `WalletConnect.vue`.
-- Styling can be adjusted in the `<style>` sections of the Vue components or in separate CSS files.
-
-## Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-[MIT License](LICENSE)
