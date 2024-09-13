@@ -51,3 +51,6 @@ dist
 
 # Dependency directories
 node_modules/
+
+# Other
+TODO.md
