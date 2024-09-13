@@ -54,7 +54,7 @@ watch(() => props.metamaskClient, fetchBalance)
 
 onMounted(fetchBalance)
 
-defineExpose({ fetchBalance })
+defineExpose({ fetchBalance, balance })
 </script>
 
 <style scoped>
