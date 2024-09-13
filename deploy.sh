@@ -16,7 +16,6 @@
      git add -A
      git commit -m 'deploy'
 
-     # Use PAT for authentication
-     git push -f https://${DEPLOY_PAT}@github.com/Jehosephat/gala-faucet.git master:gh-pages
+     git push -f git@github.com:jehosephat/gala-faucet.git master:gh-pages
 
      cd -
