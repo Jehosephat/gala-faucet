@@ -13,8 +13,12 @@
   "dependencies": {
     "@gala-chain/connect": "^1.4.2",
     "axios": "^0.27.2",
-    "vue": "^3.3.4",
-    "bignumber.js": "^9.0.2"
+    "bignumber.js": "^9.0.2",
+    "bn.js": "^5.2.1",
+    "@types/elliptic": "^6.4.18",
+    "js-sha3": "^0.8.0",
+    "json-stringify-deterministic": "^1.0.8",
+    "vue": "^3.3.4"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",

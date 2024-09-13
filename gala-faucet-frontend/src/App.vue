@@ -6,8 +6,8 @@
     <main>
       <WalletConnect ref="walletConnectComponent" />
       <div v-if="isWalletConnected" class="balances">
-        <Balance network="mainnet" :wallet-address="walletAddress" ref="mainnetBalanceComponent" />
-        <Balance network="testnet" :wallet-address="walletAddress" ref="testnetBalanceComponent" />
+        <Balance network="mainnet" :wallet-address="walletAddress" :metamask-client="metamaskClient" ref="mainnetBalanceComponent" />
+        <Balance network="testnet" :wallet-address="walletAddress" :metamask-client="metamaskClient" ref="testnetBalanceComponent" />
       </div>
       <BurnGala 
         :is-connected="isWalletConnected" 

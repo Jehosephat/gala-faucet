@@ -9,10 +9,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import axios from 'axios'
+import { MetamaskConnectClient } from '@gala-chain/connect'
 
 const props = defineProps<{
   network: 'mainnet' | 'testnet'
   walletAddress: string
+  metamaskClient: MetamaskConnectClient | null
 }>()
 
 const balance = ref<number | null>(null)
@@ -21,14 +23,25 @@ const error = ref('')
 const networkName = computed(() => props.network === 'mainnet' ? 'Mainnet' : 'Testnet')
 
 const fetchBalance = async () => {
-  if (!props.walletAddress) return
+  if (!props.walletAddress || !props.metamaskClient) return
 
+  const apiBaseUrl = props.network === 'mainnet' 
+    ? import.meta.env.VITE_MAINNET_API 
+    : import.meta.env.VITE_TESTNET_API;
   try {
     error.value = ''
-    const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/getBalance`, {
-      params: { walletAddress: props.walletAddress, network: props.network }
-    })
-    balance.value = response.data
+    const balanceDto = {
+		owner: props.walletAddress,
+		collection: "GALA",
+		category: "Unit",
+		type: "none",
+		additionalKey: "none",
+		instance: "0"
+    }
+
+    const response = await axios.post(`${apiBaseUrl}/api/asset/token-contract/FetchBalances`, balanceDto);
+	// TODO: more elegant checking of the balance response (0 items, locked amount, etc.)
+    balance.value = parseFloat(response.data.Data[0].quantity)
   } catch (err) {
     console.error(`Error fetching ${props.network} balance:`, err)
     error.value = `Error fetching ${props.network} balance. Please try again.`
@@ -37,6 +50,7 @@ const fetchBalance = async () => {
 }
 
 watch(() => props.walletAddress, fetchBalance)
+watch(() => props.metamaskClient, fetchBalance)
 
 onMounted(fetchBalance)
 
