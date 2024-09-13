@@ -49,5 +49,5 @@ nest-cli.json
 .env
 dist
 
-# Gala Chain specific (if needed)
-# Add any Gala Chain specific files or directories to ignore
+# Dependency directories
+node_modules/
