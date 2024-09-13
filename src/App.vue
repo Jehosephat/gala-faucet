@@ -4,7 +4,7 @@
       <h1>Gala Faucet</h1>
     </header>
     <main>
-      <WalletConnect ref="walletConnectComponent" />
+      <WalletConnect @registration-complete="refreshBalances" ref="walletConnectComponent" />
       <div v-if="isWalletConnected" class="balances">
         <Balance network="mainnet" :wallet-address="walletAddress" :metamask-client="metamaskClient" ref="mainnetBalanceComponent" />
         <Balance network="testnet" :wallet-address="walletAddress" :metamask-client="metamaskClient" ref="testnetBalanceComponent" />
@@ -33,6 +33,11 @@ const metamaskClient = computed(() => walletConnectComponent.value?.metamaskClie
 const walletAddress = computed(() => walletConnectComponent.value?.walletAddress ?? '')
 
 const handleBurnSuccess = () => {
+  mainnetBalanceComponent.value?.fetchBalance()
+  testnetBalanceComponent.value?.fetchBalance()
+}
+
+const refreshBalances = () => {
   mainnetBalanceComponent.value?.fetchBalance()
   testnetBalanceComponent.value?.fetchBalance()
 }
