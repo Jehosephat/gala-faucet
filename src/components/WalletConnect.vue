@@ -1,17 +1,25 @@
 <template>
   <div class="wallet-connect">
     <button @click="connectWallet" v-if="!isConnected" class="button">Connect Wallet</button>
-    <p v-else class="wallet-address">Connected: {{ truncatedAddress }}</p>
+    <div v-else>
+      <p class="wallet-address">Connected: {{ truncatedAddress }}</p>
+      <button @click="registerUser" v-if="!isRegistered" class="button">Register</button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { MetamaskConnectClient } from '@gala-chain/connect'
+import axios from 'axios'
 
 const metamaskClient = new MetamaskConnectClient();
 const isConnected = ref(false)
 const walletAddress = ref('')
+const isRegistered = ref(false)
+
+// Define emits at the top level of the script setup
+const emit = defineEmits(['registrationComplete'])
 
 const truncatedAddress = computed(() => {
   if (walletAddress.value.length > 10) {
@@ -29,12 +37,44 @@ const connectWallet = async () => {
     }
     walletAddress.value = address
     isConnected.value = true
+    await checkRegistration()
   } catch (err) {
     console.error('Error connecting wallet:', err)
   }
 }
 
-defineExpose({ isConnected, metamaskClient, walletAddress })
+const checkRegistration = async () => {
+  try {
+    console.log('walletAddress.value', walletAddress.value)
+    const response = await axios.post(`${import.meta.env.VITE_MAINNET_API}/api/asset/public-key-contract/GetPublicKey`, {
+      user: walletAddress.value
+    })
+    isRegistered.value = !!response.data.Data
+  } catch (err) {
+    // not really an error, just means the user is not registered yet
+    console.error('User is not registered', err)
+    isRegistered.value = false
+  }
+}
+
+const registerUser = async () => {
+  try {
+    const publicKey = await metamaskClient.getPublicKey()
+    console.log('publicKey', publicKey.publicKey)
+    const registerDto = {
+      publicKey: publicKey.publicKey
+    }
+    // TODO: when this is using mainnet, how do we do it without a signature?
+    const response =await axios.post(`${import.meta.env.VITE_GALASWAP_API}/CreateHeadlessWallet`, registerDto)
+    console.log('response', response)
+    isRegistered.value = true
+    emit('registrationComplete')
+  } catch (err) {
+    console.error('Error registering user:', err)
+  }
+}
+
+defineExpose({ isConnected, metamaskClient, walletAddress, isRegistered })
 </script>
 
 <style scoped>

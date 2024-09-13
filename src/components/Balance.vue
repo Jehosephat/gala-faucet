@@ -41,7 +41,7 @@ const fetchBalance = async () => {
 
     const response = await axios.post(`${apiBaseUrl}/api/asset/token-contract/FetchBalances`, balanceDto);
 	// TODO: more elegant checking of the balance response (0 items, locked amount, etc.)
-    balance.value = parseFloat(response.data.Data[0].quantity)
+    balance.value = response.data.Data.length > 0 ? parseFloat(response.data.Data[0].quantity) : 0
   } catch (err) {
     console.error(`Error fetching ${props.network} balance:`, err)
     error.value = `Error fetching ${props.network} balance. Please try again.`
@@ -54,7 +54,7 @@ watch(() => props.metamaskClient, fetchBalance)
 
 onMounted(fetchBalance)
 
-defineExpose({ fetchBalance })
+defineExpose({ fetchBalance, balance })
 </script>
 
 <style scoped>
