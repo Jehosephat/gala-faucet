@@ -1,0 +1,151 @@
+<template>
+  <div v-if="isConnected">
+	<h3>Burn GALA</h3>
+	<input v-model="amount" type="text" placeholder="Amount to burn" />
+	<button @click="burnGala">Burn GALA</button>
+	<p v-if="burnMessage">{{ burnMessage }}</p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import axios from 'axios'
+import { MetamaskConnectClient } from '@gala-chain/connect'
+import stringify from 'json-stringify-deterministic';
+import { ec as EC } from 'elliptic';
+import { keccak256 } from 'js-sha3';
+import { BN } from 'bn.js';
+import { Buffer } from 'buffer';
+
+const ecSecp256k1 = new EC('secp256k1');
+
+const props = defineProps<{
+  isConnected: boolean
+  metamaskClient: MetamaskConnectClient | null
+}>()
+
+const emit = defineEmits(['burnSuccess'])
+
+const amount = ref('')
+const burnMessage = ref('')
+
+const burnGala = async () => {
+	if (!props.metamaskClient) {
+		burnMessage.value = 'Wallet not connected'
+		return
+	}
+
+	try {
+		const owner = `eth|${props.metamaskClient.getWalletAddress.slice(2)}`
+		const burnAmount = amount.value
+
+		// Burn on mainnet
+		const burnTokensDto = { 
+			owner,
+			tokenInstances: [{
+				quantity: burnAmount,
+				tokenInstanceKey: {
+					collection: "GALA",
+					category: "Unit",
+					type: "none",
+					additionalKey: "none",
+					instance: "0"
+				}
+			}],
+			uniqueKey: `galaswap-operation-testnet-faucet-burn-${Date.now()}`
+		}
+
+		const signedBurnDto = await props.metamaskClient.sign("BurnTokens", burnTokensDto)
+		await axios.post(`${import.meta.env.VITE_MAINNET_API}/api/asset/token-contract/BurnTokens`, signedBurnDto)
+
+		// Mint on testnet
+		const mintAmount = parseFloat(burnAmount) * Number(import.meta.env.VITE_FAUCET_MULTIPLIER)
+		const mintTokensDto = {
+          owner: owner,
+          quantity: mintAmount.toString(),
+          tokenClass: {
+            collection: "GALA",
+            category: "Unit",
+            type: "none",
+            additionalKey: "none"
+          },
+          tokenInstance: "0",
+          uniqueKey: `mint-${signedBurnDto.uniqueKey}`
+        }
+
+        // sign with faucet admin credentials
+        const signedMintTokensDto = signObject(mintTokensDto, import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY)
+		const mintResponse = await axios.post(`${import.meta.env.VITE_TESTNET_API}/api/asset/token-contract/MintToken`, signedMintTokensDto)
+
+		burnMessage.value = `Successfully burned ${burnAmount} GALA on mainnet and minted ${mintAmount} GALA on testnet`
+		emit('burnSuccess')
+		amount.value = ''
+	} catch (error) {
+		console.error('Error burning/minting GALA:', error)
+		burnMessage.value = 'Error burning/minting GALA. Please try again.'
+	}
+}
+
+function signObject<TInputType extends object>(
+  obj: TInputType,
+  privateKey: string
+): TInputType & { signature: string } {
+  const toSign = { ...obj };
+
+  if ('signature' in toSign) {
+    delete toSign.signature;
+  }
+
+  const stringToSign = stringify(toSign);
+  const stringToSignBuffer = Buffer.from(stringToSign);
+
+  const keccak256Hash = Buffer.from(keccak256.digest(stringToSignBuffer));
+  const privateKeyBuffer = Buffer.from(privateKey.replace(/^0x/, ''), 'hex');
+
+  const signature = ecSecp256k1.sign(keccak256Hash, privateKeyBuffer);
+
+  // Normalize the signature if it's greater than half of order n
+  if (signature.s.cmp(ecSecp256k1.curve.n.shrn(1)) > 0) {
+    const curveN = ecSecp256k1.curve.n;
+    const newS = new BN(curveN).sub(signature.s);
+    const newRecoverParam = signature.recoveryParam != null ? 1 - signature.recoveryParam : null;
+    signature.s = newS;
+    signature.recoveryParam = newRecoverParam;
+  }
+
+  const signatureString = Buffer.from(signature.toDER()).toString('base64');
+
+  return {
+    ...toSign,
+    signature: signatureString,
+  };
+}
+</script>
+
+<style scoped>
+.burn-gala {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+button {
+  width: 100%;
+}
+
+.burn-message {
+  margin-top: 15px;
+  font-weight: bold;
+}
+</style>
