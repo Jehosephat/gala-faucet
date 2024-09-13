@@ -47,7 +47,7 @@ nest-cli.json
 .cache
 .output
 .env
-dist
+# dist
 
 # Dependency directories
 node_modules/

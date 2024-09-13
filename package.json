@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "deploy": "sh deploy.sh"
   },
   "dependencies": {
     "@gala-chain/connect": "^1.4.2",
