@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000'; // Adjust this to match your backend URL
+const API_URL = 'http://localhost:3001'; // Adjust this to match your backend URL
 
 export const api = {
   async getBalance(): Promise<number> {

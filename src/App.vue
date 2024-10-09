@@ -20,6 +20,8 @@
         @mint-success="handleMintSuccess" 
       />
     </main>
+    <SignJson v-if="debugMode" />
+    <GenerateKeyPair v-if="debugMode" />
   </div>
 </template>
 
@@ -29,6 +31,8 @@ import WalletConnect from './components/WalletConnect.vue'
 import Balance from './components/Balance.vue'
 import BurnGala from './components/BurnGala.vue'
 import MintGala from './components/MintGala.vue'
+import SignJson from './components/SignJson.vue'
+import GenerateKeyPair from './components/GenerateKeyPair.vue'
 
 const walletConnectComponent = ref<InstanceType<typeof WalletConnect> | null>(null)
 const mainnetBalanceComponent = ref<InstanceType<typeof Balance> | null>(null)
