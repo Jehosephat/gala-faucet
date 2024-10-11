@@ -12,6 +12,8 @@
       <BurnGala 
         :is-connected="isWalletConnected" 
         :metamask-client="metamaskClient" 
+        :mainnet-balance="mainnetBalance"
+        :locked-balance="mainnetLockedBalance"
         @burn-success="handleBurnSuccess" 
         @mint-success="handleMintSuccess" 
       />
@@ -32,6 +34,9 @@ const testnetBalanceComponent = ref<InstanceType<typeof Balance> | null>(null)
 const isWalletConnected = computed(() => walletConnectComponent.value?.isConnected ?? false)
 const metamaskClient = computed(() => walletConnectComponent.value?.metamaskClient ?? null)
 const walletAddress = computed(() => walletConnectComponent.value?.walletAddress ?? '')
+
+const mainnetBalance = computed(() => mainnetBalanceComponent.value?.balance ?? 0)
+const mainnetLockedBalance = computed(() => mainnetBalanceComponent.value?.lockedBalance ?? 0)
 
 const handleBurnSuccess = () => {
   mainnetBalanceComponent.value?.fetchBalance()
