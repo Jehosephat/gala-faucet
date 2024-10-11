@@ -24,7 +24,7 @@ const props = defineProps<{
   metamaskClient: MetamaskConnectClient | null
 }>()
 
-const emit = defineEmits(['burnSuccess'])
+const emit = defineEmits(['burnSuccess', 'mintSuccess'])
 
 const amount = ref('')
 const burnMessage = ref('')
@@ -63,6 +63,9 @@ const burnGala = async () => {
 		// TODO: do a dry run to get fees and make sure the burn will succeed before moving on to minting
 		await axios.post(`${import.meta.env.VITE_BURN_GATEWAY_API}/BurnTokens`, signedBurnDto)
 
+		emit('burnSuccess')
+
+
 		// Mint on testnet
 		const mintAmount = parseFloat(burnAmount) * Number(import.meta.env.VITE_FAUCET_MULTIPLIER)
 		const mintTokensDto = {
@@ -81,11 +84,11 @@ const burnGala = async () => {
 
 		// sign with faucet admin credentials
 		const signedMintTokensDto = signObject(mintTokensDto, import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY)
-		console.log('signedMintTokensDto', signedMintTokensDto)
 		const mintResponse = await axios.post(`${import.meta.env.VITE_FAUCET_GATEWAY_API}/MintTokenWithAllowance`, signedMintTokensDto)
-		console.log('mintResponse', mintResponse)
+
+		emit('mintSuccess')
+
 		burnMessage.value = `Successfully burned ${burnAmount} GALA on mainnet and minted ${mintAmount} GALA on testnet`
-		emit('burnSuccess')
 		amount.value = ''
 	} catch (error) {
 		console.error('Error burning/minting GALA:', error)

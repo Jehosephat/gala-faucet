@@ -29,9 +29,12 @@ This project consists of a single frontend application built with Vue.js and Vit
    ```
    VITE_BURN_GATEWAY_API=<gateway where burn transactions are sent>
    VITE_FAUCET_GATEWAY_API=<gateway where faucet transactions are sent (minting)>
-   VITE_FAUCET_MULTIPLIER=<multiplier for the faucet (100 = 1:100)>
+   VITE_BURN_GATEWAY_PUBLIC_KEY_API=<gateway for burn public key contract>
+   VITE_FAUCET_GATEWAY_PUBLIC_KEY_API=<gateway for faucet public key contract>
+   VITE_GALASWAP_API=<GalaSwap API endpoint>
+   VITE_FAUCET_MULTIPLIER=<multiplier for the faucet (10 = 1:10)>
    VITE_FAUCET_ADMIN_PRIVATE_KEY=<private key of the faucet admin>
-   VITE_FAUCET_ADMIN_PUBLIC_KEY=<public key of the faucet admin>
+   VITE_FAUCET_ADMIN_PUBLIC_KEY=<public key of the faucet admin> needed for DER signatures
    ```
    Replace the placeholders with your actual values.
 
@@ -54,7 +57,7 @@ This project consists of a single frontend application built with Vue.js and Vit
 - The main application component is in `src/App.vue`.
 - Individual components are located in `src/components/`:
   - `WalletConnect.vue`: Handles wallet connection
-  - `Balance.vue`: Displays GALA balance for mainnet and testnet
+  - `Balance.vue`: Displays GALA balance information for mainnet and testnet
   - `BurnGala.vue`: Handles the burning and minting process
 - Environment variables are defined in the `.env` file and typed in `src/env.d.ts`.
 - The Vite configuration is in `vite.config.js`.
