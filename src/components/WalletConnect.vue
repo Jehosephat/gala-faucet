@@ -23,7 +23,8 @@ const emit = defineEmits(['registrationComplete'])
 
 const truncatedAddress = computed(() => {
   if (walletAddress.value.length > 10) {
-    return `${walletAddress.value.slice(0, 6)}...${walletAddress.value.slice(-4)}`
+    return walletAddress.value
+    // return `${walletAddress.value.slice(0, 6)}...${walletAddress.value.slice(-4)}`
   }
   return walletAddress.value
 })
