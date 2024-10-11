@@ -23,7 +23,8 @@ const emit = defineEmits(['registrationComplete'])
 
 const truncatedAddress = computed(() => {
   if (walletAddress.value.length > 10) {
-    return `${walletAddress.value.slice(0, 6)}...${walletAddress.value.slice(-4)}`
+    return walletAddress.value
+    // return `${walletAddress.value.slice(0, 6)}...${walletAddress.value.slice(-4)}`
   }
   return walletAddress.value
 })
@@ -46,7 +47,7 @@ const connectWallet = async () => {
 const checkRegistration = async () => {
   try {
     console.log('walletAddress.value', walletAddress.value)
-    const response = await axios.post(`${import.meta.env.VITE_MAINNET_API}/api/asset/public-key-contract/GetPublicKey`, {
+    const response = await axios.post(`${import.meta.env.VITE_BURN_GATEWAY_PUBLIC_KEY_API}/GetPublicKey`, {
       user: walletAddress.value
     })
     isRegistered.value = !!response.data.Data
@@ -60,6 +61,7 @@ const checkRegistration = async () => {
 const registerUser = async () => {
   try {
     const publicKey = await metamaskClient.getPublicKey()
+    console.log('publicKey', publicKey)
     console.log('publicKey', publicKey.publicKey)
     const registerDto = {
       publicKey: publicKey.publicKey

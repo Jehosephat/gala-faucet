@@ -15,10 +15,11 @@ jobs:
       
     - name: Build
       env:
-        VITE_MAINNET_API: ${{ secrets.VITE_MAINNET_API }}
-        VITE_TESTNET_API: ${{ secrets.VITE_TESTNET_API }}
+        VITE_BURN_GATEWAY_API: ${{ secrets.VITE_BURN_GATEWAY_API }}
+        VITE_FAUCET_GATEWAY_API: ${{ secrets.VITE_FAUCET_GATEWAY_API }}
         VITE_FAUCET_MULTIPLIER: ${{ secrets.VITE_FAUCET_MULTIPLIER }}
         VITE_FAUCET_ADMIN_PRIVATE_KEY: ${{ secrets.VITE_FAUCET_ADMIN_PRIVATE_KEY }}
+        VITE_FAUCET_ADMIN_PUBLIC_KEY: ${{ secrets.VITE_FAUCET_ADMIN_PUBLIC_KEY }}
       run: npm run build
       
     - name: Deploy
