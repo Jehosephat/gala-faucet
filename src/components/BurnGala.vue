@@ -18,6 +18,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { MetamaskConnectClient } from '@gala-chain/connect'
 import { signObject } from '../../utils/signing'
+import { tokenConfig } from '../config/tokens'
 
 const props = defineProps<{
   isConnected: boolean
@@ -48,15 +49,9 @@ const burnGala = async () => {
 			owner,
 			tokenInstances: [{
 				quantity: burnAmount,
-				tokenInstanceKey: {
-					collection: "GALA",
-					category: "Unit",
-					type: "none",
-					additionalKey: "none",
-					instance: "0"
-				}
+				tokenInstanceKey: tokenConfig.mainnet
 			}],
-			uniqueKey: `testnet-faucet-burn-${Date.now()}`
+			uniqueKey: `testnet-faucet-burn-${Date.now()}`	
 		}
 
 		const signedBurnDto = await props.metamaskClient.sign("BurnTokens", burnTokensDto)
@@ -65,19 +60,13 @@ const burnGala = async () => {
 
 		emit('burnSuccess')
 
-
 		// Mint on testnet
 		const mintAmount = parseFloat(burnAmount) * Number(import.meta.env.VITE_FAUCET_MULTIPLIER)
 		const mintTokensDto = {
 			owner: owner,
 			quantity: mintAmount.toString(),
-			tokenClass: {
-				collection: "GALA",
-				category: "Unit",
-				type: "none",
-				additionalKey: "none"
-			},
-			tokenInstance: "0",
+			tokenClass: tokenConfig.testnet,
+			tokenInstance: tokenConfig.testnet.instance,
 			uniqueKey: `mint-${signedBurnDto.uniqueKey}`,
 			signerPublicKey: import.meta.env.VITE_FAUCET_ADMIN_PUBLIC_KEY
 		}

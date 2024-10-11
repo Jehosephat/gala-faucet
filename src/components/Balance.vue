@@ -10,6 +10,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import axios from 'axios'
 import { MetamaskConnectClient } from '@gala-chain/connect'
+import { tokenConfig } from '../config/tokens';
 
 const props = defineProps<{
   network: 'mainnet' | 'testnet'
@@ -32,12 +33,8 @@ const apiBaseUrl = props.network === 'mainnet'
   try {
     error.value = ''
     const balanceDto = {
-		owner: props.walletAddress,
-		collection: "GALA",
-		category: "Unit",
-		type: "none",
-		additionalKey: "none",
-		instance: "0"
+      owner: props.walletAddress,
+      ...tokenConfig[props.network]
     }
 
     const response = await axios.post(`${apiBaseUrl}/FetchBalances`, balanceDto);
