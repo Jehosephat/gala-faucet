@@ -1,22 +1,26 @@
 <template>
-  <div v-if="isConnected">
-	<h3>Burn GALA</h3>
-	<input 
-	  v-model="amount" 
-	  type="text" 
-	  placeholder="Amount to burn" 
-	  class="input" 
-	  @input="formatAmount"
-	/>
-	<p class="min-amount">Minimum amount: {{ minAmount }} GALA</p>
-	<button
-	  @click="burnGala"
-	  class="button"
-	  :disabled="isBurning || !isValidAmount"
-	>
-	  {{ isBurning ? 'Burning...' : 'Burn GALA' }}
-	</button>
-	<p v-if="burnMessage" :class="{ 'error-message': isError }">{{ burnMessage }}</p>
+  <div v-if="isConnected" class="burn-gala">
+    <div class="header">
+      <h3>Burn GALA</h3>
+      <span class="fee-label">Fee: 1 GALA</span>
+    </div>
+    <input 
+      v-model="amount" 
+      type="text" 
+      placeholder="Amount to burn" 
+      class="input full-width" 
+      @input="formatAmount"
+    />
+    <p class="min-amount">Minimum: {{ minAmount }} GALA</p>
+    <button
+      @click="burnGala"
+      class="button full-width"
+      :class="{ 'button-disabled': isBurning || !isValidAmount }"
+      :disabled="isBurning || !isValidAmount"
+    >
+      {{ isBurning ? 'Burning...' : 'Burn GALA' }}
+    </button>
+    <p v-if="burnMessage" :class="{ 'error-message': isError }">{{ burnMessage }}</p>
   </div>
 </template>
 
@@ -34,7 +38,7 @@ const props = defineProps<{
   lockedBalance: number
 }>()
 
-const emit = defineEmits(['burnSuccess', 'mintSuccess'])
+const emit = defineEmits(['burnSuccess', 'mintSuccess', 'burnAmountChange'])
 
 const amount = ref('')
 const burnMessage = ref('')
@@ -70,11 +74,11 @@ const formatAmount = () => {
   }
 }
 
-watch(amount, () => {
+watch(amount, (newAmount) => {
   isError.value = false
   burnMessage.value = ''
 
-  const numAmount = Number(amount.value)
+  const numAmount = Number(newAmount)
   if (numAmount < minAmount) {
     burnMessage.value = `Amount must be at least ${minAmount} GALA`
     isError.value = true
@@ -82,6 +86,8 @@ watch(amount, () => {
     burnMessage.value = `Amount exceeds available balance of ${availableBalance.value} GALA`
     isError.value = true
   }
+  
+  emit('burnAmountChange', Number(newAmount))
 })
 
 const burnGala = async () => {
@@ -145,38 +151,51 @@ const burnGala = async () => {
 
 <style scoped>
 .burn-gala {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 20px;
-  margin-top: 20px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 h3 {
-  color: var(--primary-color);
-  margin-bottom: 15px;
+  margin: 0;
 }
 
-input {
+.fee-label {
+  font-size: 0.8em;
+  color: #888888;
+}
+
+.full-width {
   width: 100%;
-  margin-bottom: 15px;
-}
-
-button {
-  width: 100%;
-}
-
-.burn-message {
-  margin-top: 15px;
-  font-weight: bold;
+  box-sizing: border-box;
 }
 
 .min-amount {
   font-size: 0.8em;
-  color: #888;
+  color: #888888;
+  margin-top: 5px;
   margin-bottom: 10px;
+}
+
+.button {
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+.button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #cccccc;
+  color: #666666;
 }
 
 .error-message {
   color: #ff4d4d;
+  margin-top: 10px;
 }
 </style>

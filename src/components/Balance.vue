@@ -1,7 +1,12 @@
 <template>
   <div class="balance">
     <h3>{{ networkName }} Balance</h3>
-    <p class="balance-amount">{{ balance }} GALA</p>
+    <p v-if="balance !== null" class="balance-amount">
+      {{ balance }} GALA
+      <span v-if="balance === 0 && network === 'mainnet'" class="get-gala">
+        (<a href="https://galaswap.gala.com/?viewProduct=66a8ed9e4d218b9606182ea7" target="_blank" rel="noopener noreferrer">Get GALA</a>)
+      </span>
+    </p>
     <p v-if="lockedBalance > 0" class="locked-balance">
       ({{ lockedBalance }} GALA locked)
     </p>
@@ -100,5 +105,20 @@ h3 {
 .error {
   color: #ff4d4d;
   margin-top: 10px;
+}
+
+.get-gala {
+  font-size: 0.6em;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+.get-gala a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.get-gala a:hover {
+  text-decoration: underline;
 }
 </style>
