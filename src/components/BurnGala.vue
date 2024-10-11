@@ -60,7 +60,8 @@ const burnGala = async () => {
 		}
 
 		const signedBurnDto = await props.metamaskClient.sign("BurnTokens", burnTokensDto)
-		await axios.post(`${import.meta.env.VITE_MAINNET_API}/api/asset/token-contract/BurnTokens`, signedBurnDto)
+		// TODO: do a dry run to get fees and make sure the burn will succeed before moving on to minting
+		await axios.post(`${import.meta.env.VITE_BURN_GATEWAY_API}/BurnTokens`, signedBurnDto)
 
 		// Mint on testnet
 		const mintAmount = parseFloat(burnAmount) * Number(import.meta.env.VITE_FAUCET_MULTIPLIER)
@@ -74,13 +75,15 @@ const burnGala = async () => {
 				additionalKey: "none"
 			},
 			tokenInstance: "0",
-			uniqueKey: `mint-${signedBurnDto.uniqueKey}`
+			uniqueKey: `mint-${signedBurnDto.uniqueKey}`,
+			signerPublicKey: import.meta.env.VITE_FAUCET_ADMIN_PUBLIC_KEY
 		}
 
 		// sign with faucet admin credentials
 		const signedMintTokensDto = signObject(mintTokensDto, import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY)
-		const mintResponse = await axios.post(`${import.meta.env.VITE_TESTNET_API}/api/asset/token-contract/MintToken`, signedMintTokensDto)
-
+		console.log('signedMintTokensDto', signedMintTokensDto)
+		const mintResponse = await axios.post(`${import.meta.env.VITE_FAUCET_GATEWAY_API}/MintTokenWithAllowance`, signedMintTokensDto)
+		console.log('mintResponse', mintResponse)
 		burnMessage.value = `Successfully burned ${burnAmount} GALA on mainnet and minted ${mintAmount} GALA on testnet`
 		emit('burnSuccess')
 		amount.value = ''

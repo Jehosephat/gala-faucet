@@ -32,12 +32,13 @@ const mintGala = async () => {
             additionalKey: "none"
           },
           tokenInstance: "0",
-          uniqueKey: `testnet-faucet-free-mint-${Date.now()}`
+          uniqueKey: `testnet-faucet-free-mint-${Date.now()}`,
+          signerPublicKey: import.meta.env.VITE_FAUCET_ADMIN_PUBLIC_KEY // supports DER signature
         }
 
     // Sign with faucet admin credentials
     const signedMintTokensDto = signObject(mintTokensDto, import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY)
-    const mintResponse = await axios.post(`${import.meta.env.VITE_TESTNET_API}/api/asset/token-contract/MintToken`, signedMintTokensDto)
+    const mintResponse = await axios.post(`${import.meta.env.VITE_FAUCET_GATEWAY_API}/MintTokenWithAllowance`, signedMintTokensDto)
 
     mintMessage.value = `Successfully minted ${mintAmount} GALA on testnet`
     isError.value = false

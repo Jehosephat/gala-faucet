@@ -27,10 +27,11 @@ This project consists of a single frontend application built with Vue.js and Vit
 
 3. Create a `.env` file in the `gala-faucet-frontend` directory with the following content:
    ```
-   VITE_MAINNET_API=(TBD, can use TESTNET api for now)
-   VITE_TESTNET_API=https://galachain-gateway-chain-platform-stage-chain-platform-eks.stage.galachain.com
-   VITE_FAUCET_MULTIPLIER=100
-   VITE_FAUCET_ADMIN_PRIVATE_KEY=0x...
+   VITE_BURN_GATEWAY_API=<gateway where burn transactions are sent>
+   VITE_FAUCET_GATEWAY_API=<gateway where faucet transactions are sent (minting)>
+   VITE_FAUCET_MULTIPLIER=<multiplier for the faucet (100 = 1:100)>
+   VITE_FAUCET_ADMIN_PRIVATE_KEY=<private key of the faucet admin>
+   VITE_FAUCET_ADMIN_PUBLIC_KEY=<public key of the faucet admin>
    ```
    Replace the placeholders with your actual values.
 

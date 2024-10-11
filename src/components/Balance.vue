@@ -25,9 +25,10 @@ const networkName = computed(() => props.network === 'mainnet' ? 'Mainnet' : 'Te
 const fetchBalance = async () => {
   if (!props.walletAddress || !props.metamaskClient) return
 
-  const apiBaseUrl = props.network === 'mainnet' 
-    ? import.meta.env.VITE_MAINNET_API 
-    : import.meta.env.VITE_TESTNET_API;
+const apiBaseUrl = props.network === 'mainnet' 
+    ? import.meta.env.VITE_BURN_GATEWAY_API
+    : import.meta.env.VITE_FAUCET_GATEWAY_API;
+
   try {
     error.value = ''
     const balanceDto = {
@@ -39,7 +40,7 @@ const fetchBalance = async () => {
 		instance: "0"
     }
 
-    const response = await axios.post(`${apiBaseUrl}/api/asset/token-contract/FetchBalances`, balanceDto);
+    const response = await axios.post(`${apiBaseUrl}/FetchBalances`, balanceDto);
 	// TODO: more elegant checking of the balance response (0 items, locked amount, etc.)
     balance.value = response.data.Data.length > 0 ? parseFloat(response.data.Data[0].quantity) : 0
   } catch (err) {
