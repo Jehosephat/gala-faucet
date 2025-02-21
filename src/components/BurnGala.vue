@@ -115,7 +115,7 @@ const burnGala = async () => {
 
 	const signedBurnDto = await props.metamaskClient.sign("BurnTokens", burnTokensDto)
 	// TODO: do a dry run to get fees and make sure the burn will succeed before moving on to minting
-	await axios.post(`${import.meta.env.VITE_BURN_GATEWAY_API}/BurnTokens`, signedBurnDto)
+	await axios.post(`${import.meta.env.VITE_MAINNET_GATEWAY_TOKEN_API}/BurnTokens`, signedBurnDto)
 
     emit('burnSuccess')
 
@@ -132,7 +132,7 @@ const burnGala = async () => {
 
     // sign with faucet admin credentials
     const signedMintTokensDto = signObject(mintTokensDto, import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY)
-    await axios.post(`${import.meta.env.VITE_FAUCET_GATEWAY_API}/MintTokenWithAllowance`, signedMintTokensDto)
+    await axios.post(`${import.meta.env.VITE_TESTNET_GATEWAY_TOKEN_API}/MintTokenWithAllowance`, signedMintTokensDto)
 
     emit('mintSuccess')
 
