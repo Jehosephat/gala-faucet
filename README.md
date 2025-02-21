@@ -27,10 +27,10 @@ This project consists of a single frontend application built with Vue.js and Vit
 
 3. Create a `.env` file in the `gala-faucet-frontend` directory with the following content:
    ```
-   VITE_BURN_GATEWAY_API=<gateway where burn transactions are sent>
-   VITE_FAUCET_GATEWAY_API=<gateway where faucet transactions are sent (minting)>
-   VITE_BURN_GATEWAY_PUBLIC_KEY_API=<gateway for burn public key contract>
-   VITE_FAUCET_GATEWAY_PUBLIC_KEY_API=<gateway for faucet public key contract>
+   VITE_MAINNET_GATEWAY_TOKEN_API=<gateway where mainnet token transactions are sent (burning)>
+   VITE_TESTNET_GATEWAY_TOKEN_API=<gateway where testnet token transactions are sent (minting)>
+   VITE_MAINNET_GATEWAY_PUBLIC_KEY_API=<gateway for mainnet public key contract>
+   VITE_TESTNET_GATEWAY_PUBLIC_KEY_API=<gateway for testnet public key contract>
    VITE_GALASWAP_API=<GalaSwap API endpoint>
    VITE_FAUCET_MULTIPLIER=<multiplier for the faucet (10 = 1:10)>
    VITE_FAUCET_ADMIN_PRIVATE_KEY=<private key of the faucet admin>

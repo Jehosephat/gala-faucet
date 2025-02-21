@@ -36,8 +36,8 @@ const fetchBalance = async () => {
   if (!props.walletAddress || !props.metamaskClient) return
 
   const apiBaseUrl = props.network === 'mainnet' 
-    ? import.meta.env.VITE_BURN_GATEWAY_API
-    : import.meta.env.VITE_FAUCET_GATEWAY_API;
+    ? import.meta.env.VITE_MAINNET_GATEWAY_TOKEN_API
+    : import.meta.env.VITE_TESTNET_GATEWAY_TOKEN_API;
 
   try {
     error.value = ''
