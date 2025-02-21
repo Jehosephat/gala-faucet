@@ -12,6 +12,7 @@
 import { ref, computed } from 'vue'
 import { MetamaskConnectClient } from '@gala-chain/connect'
 import axios from 'axios'
+import { ethers } from 'ethers'
 
 const metamaskClient = new MetamaskConnectClient();
 const isConnected = ref(false)
@@ -50,6 +51,10 @@ const checkRegistration = async () => {
     const response = await axios.post(`${import.meta.env.VITE_BURN_GATEWAY_PUBLIC_KEY_API}/GetPublicKey`, {
       user: walletAddress.value
     })
+    const response2 = await axios.post(`${import.meta.env.VITE_FAUCET_GATEWAY_PUBLIC_KEY_API}/GetPublicKey`, {
+      user: walletAddress.value
+    })
+    console.log(response2.data.Data)
     isRegistered.value = !!response.data.Data
   } catch (err) {
     // not really an error, just means the user is not registered yet
@@ -62,13 +67,26 @@ const registerUser = async () => {
   try {
     const publicKey = await metamaskClient.getPublicKey()
     console.log('publicKey', publicKey)
-    console.log('publicKey', publicKey.publicKey)
     const registerDto = {
       publicKey: publicKey.publicKey
     }
-    // TODO: when this is using mainnet, how do we do it without a signature?
-    const response =await axios.post(`${import.meta.env.VITE_GALASWAP_API}/CreateHeadlessWallet`, registerDto)
-    console.log('response', response)
+    
+    const adminPrivateKey = import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY
+    const adminWallet = new ethers.Wallet(adminPrivateKey)
+    const signature = await adminWallet.signMessage(registerDto.publicKey)
+    const mainnetPayload = { 
+      ...registerDto, 
+      signature
+    }
+    const testnetRegistration = axios.post(
+      `${import.meta.env.VITE_GALASWAP_API}/CreateHeadlessWallet`,
+      registerDto
+    )
+    const mainnetRegistration = axios.post(
+      `${import.meta.env.VITE_FAUCET_GATEWAY_PUBLIC_KEY_API}/RegisterEthUser`,
+      mainnetPayload
+    )
+    await Promise.all([testnetRegistration, mainnetRegistration])
     isRegistered.value = true
     emit('registrationComplete')
   } catch (err) {
