@@ -74,19 +74,19 @@ const registerUser = async () => {
     const adminPrivateKey = import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY
     const adminWallet = new ethers.Wallet(adminPrivateKey)
     const signature = await adminWallet.signMessage(registerDto.publicKey)
-    const mainnetPayload = { 
+    const faucetPayload = { 
       ...registerDto, 
       signature
     }
-    const testnetRegistration = axios.post(
+    const mainnetRegistration = axios.post(
       `${import.meta.env.VITE_GALASWAP_API}/CreateHeadlessWallet`,
       registerDto
     )
-    const mainnetRegistration = axios.post(
+    const faucetRegistration = axios.post(
       `${import.meta.env.VITE_FAUCET_GATEWAY_PUBLIC_KEY_API}/RegisterEthUser`,
-      mainnetPayload
+      faucetPayload
     )
-    await Promise.all([testnetRegistration, mainnetRegistration])
+    await Promise.all([mainnetRegistration, faucetRegistration])
     isRegistered.value = true
     emit('registrationComplete')
   } catch (err) {
