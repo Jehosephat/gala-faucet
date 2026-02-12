@@ -4,29 +4,37 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Install Dependencies
-      run: npm ci
-      
-    - name: Build
-      env:
-        VITE_MAINNET_GATEWAY_TOKEN_API: ${{ secrets.VITE_MAINNET_GATEWAY_TOKEN_API }}
-        VITE_TESTNET_GATEWAY_TOKEN_API: ${{ secrets.VITE_TESTNET_GATEWAY_TOKEN_API }}
-        VITE_MAINNET_GATEWAY_PUBLIC_KEY_API: ${{ secrets.VITE_MAINNET_GATEWAY_PUBLIC_KEY_API }}
-        VITE_TESTNET_GATEWAY_PUBLIC_KEY_API: ${{ secrets.VITE_TESTNET_GATEWAY_PUBLIC_KEY_API }}
-        VITE_GALASWAP_API: ${{ secrets.VITE_GALASWAP_API }}
-        VITE_FAUCET_MULTIPLIER: ${{ secrets.VITE_FAUCET_MULTIPLIER }}
-        VITE_FAUCET_ADMIN_PRIVATE_KEY: ${{ secrets.VITE_FAUCET_ADMIN_PRIVATE_KEY }}
-        VITE_FAUCET_ADMIN_PUBLIC_KEY: ${{ secrets.VITE_FAUCET_ADMIN_PUBLIC_KEY }}
-      run: npm run build
-      
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.DEPLOY_PAT }}
-        publish_dir: ./dist
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          VITE_MAINNET_GATEWAY_TOKEN_API: ${{ secrets.VITE_MAINNET_GATEWAY_TOKEN_API }}
+          VITE_TESTNET_GATEWAY_TOKEN_API: ${{ secrets.VITE_TESTNET_GATEWAY_TOKEN_API }}
+          VITE_MAINNET_GATEWAY_PUBLIC_KEY_API: ${{ secrets.VITE_MAINNET_GATEWAY_PUBLIC_KEY_API }}
+          VITE_TESTNET_GATEWAY_PUBLIC_KEY_API: ${{ secrets.VITE_TESTNET_GATEWAY_PUBLIC_KEY_API }}
+          VITE_GALASWAP_API: ${{ secrets.VITE_GALASWAP_API }}
+          VITE_FAUCET_MULTIPLIER: ${{ secrets.VITE_FAUCET_MULTIPLIER }}
+          VITE_FAUCET_ADMIN_PRIVATE_KEY: ${{ secrets.VITE_FAUCET_ADMIN_PRIVATE_KEY }}
+          VITE_FAUCET_ADMIN_PUBLIC_KEY: ${{ secrets.VITE_FAUCET_ADMIN_PUBLIC_KEY }}
+        run: npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
