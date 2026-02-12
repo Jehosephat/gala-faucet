@@ -61,4 +61,5 @@ This project consists of a single frontend application built with Vue.js and Vit
   - `BurnGala.vue`: Handles the burning and minting process
 - Environment variables are defined in the `.env` file and typed in `src/env.d.ts`.
 - The Vite configuration is in `vite.config.js`.
+- Blank
 
