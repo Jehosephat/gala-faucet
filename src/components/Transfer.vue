@@ -7,7 +7,7 @@
     <input
       v-model="toAddress"
       type="text"
-      placeholder="Target wallet (0x... or eth|...)"
+      placeholder="Target wallet (0x..., eth|..., client|...)"
       class="input full-width"
       @input="clearMessage"
     />
@@ -59,6 +59,9 @@ const normalizedToAddress = computed(() => {
   if (!trimmed) {
     return ''
   }
+  if (/^[a-zA-Z][a-zA-Z0-9_-]*\|[a-zA-Z0-9._:-]+$/.test(trimmed)) {
+    return trimmed
+  }
   if (trimmed.startsWith('eth|')) {
     return trimmed
   }
@@ -105,7 +108,7 @@ watch([toAddress, amount, availableBalance], () => {
   clearMessage()
 
   if (toAddress.value.trim() && !normalizedToAddress.value) {
-    transferMessage.value = 'Target wallet must be eth|... or 0x...'
+    transferMessage.value = 'Target wallet must be 0x... or prefix|identifier (e.g. eth|... or client|...)'
     isError.value = true
     return
   }
@@ -148,6 +151,7 @@ const transferGala = async () => {
 
     transferMessage.value = `Transferred ${amount.value} GALA to ${normalizedToAddress.value}`
     amount.value = ''
+    toAddress.value = ''
     emit('transferSuccess')
   } catch (error) {
     console.error('Error transferring GALA:', error)

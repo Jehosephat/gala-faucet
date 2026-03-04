@@ -71,6 +71,7 @@ const handleMintSuccess = () => {
 
 const handleTransferSuccess = () => {
   mainnetBalanceComponent.value?.fetchBalance()
+  testnetBalanceComponent.value?.fetchBalance()
 }
 
 const refreshBalances = () => {
