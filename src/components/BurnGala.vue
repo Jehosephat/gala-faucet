@@ -119,25 +119,25 @@ const burnGala = async () => {
 
     emit('burnSuccess')
 
-    // Mint on testnet
-    const mintAmount = parseFloat(burnAmount) * Number(import.meta.env.VITE_FAUCET_MULTIPLIER)
-    const mintTokensDto = {
-      owner: owner,
-      quantity: mintAmount.toString(),
-      tokenClass: tokenConfig.testnet,
-      tokenInstance: tokenConfig.testnet.instance,
-      uniqueKey: `mint-${signedBurnDto.uniqueKey}`,
-      signerPublicKey: import.meta.env.VITE_FAUCET_ADMIN_PUBLIC_KEY
-    }
+    // // Mint on testnet
+    // const mintAmount = parseFloat(burnAmount) * Number(import.meta.env.VITE_FAUCET_MULTIPLIER)
+    // const mintTokensDto = {
+    //   owner: owner,
+    //   quantity: mintAmount.toString(),
+    //   tokenClass: tokenConfig.testnet,
+    //   tokenInstance: tokenConfig.testnet.instance,
+    //   uniqueKey: `mint-${signedBurnDto.uniqueKey}`,
+    //   signerPublicKey: import.meta.env.VITE_FAUCET_ADMIN_PUBLIC_KEY
+    // }
 
-    // sign with faucet admin credentials
-    const signedMintTokensDto = signObject(mintTokensDto, import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY)
-    await axios.post(`${import.meta.env.VITE_TESTNET_GATEWAY_TOKEN_API}/MintTokenWithAllowance`, signedMintTokensDto)
+    // // sign with faucet admin credentials
+    // const signedMintTokensDto = signObject(mintTokensDto, import.meta.env.VITE_FAUCET_ADMIN_PRIVATE_KEY)
+    // await axios.post(`${import.meta.env.VITE_TESTNET_GATEWAY_TOKEN_API}/MintTokenWithAllowance`, signedMintTokensDto)
 
-    emit('mintSuccess')
+    // emit('mintSuccess')
 
-    burnMessage.value = `Successfully burned ${burnAmount} GALA on mainnet and minted ${mintAmount} GALA on testnet`
-    amount.value = ''
+    // burnMessage.value = `Successfully burned ${burnAmount} GALA on mainnet and minted ${mintAmount} GALA on testnet`
+    // amount.value = ''
   } catch (error) {
     console.error('Error burning/minting GALA:', error)
     burnMessage.value = 'Error burning/minting GALA. Please try again.'

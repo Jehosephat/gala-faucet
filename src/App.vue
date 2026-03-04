@@ -26,6 +26,13 @@
             @mint-success="handleMintSuccess" 
             @burn-amount-change="updateBurnAmount"
           />
+          <Transfer
+            :is-connected="isWalletConnected"
+            :metamask-client="metamaskClient"
+            :mainnet-balance="mainnetBalance"
+            :locked-balance="mainnetLockedBalance"
+            @transfer-success="handleTransferSuccess"
+          />
         </div>
       </div>
     </main>
@@ -38,6 +45,7 @@ import WalletConnect from './components/WalletConnect.vue'
 import Balance from './components/Balance.vue'
 import BurnGala from './components/BurnGala.vue'
 import MultiplierDisplay from './components/MultiplierDisplay.vue'
+import Transfer from './components/Transfer.vue'
 
 const walletConnectComponent = ref<InstanceType<typeof WalletConnect> | null>(null)
 const mainnetBalanceComponent = ref<InstanceType<typeof Balance> | null>(null)
@@ -59,6 +67,10 @@ const handleBurnSuccess = () => {
 
 const handleMintSuccess = () => {
   testnetBalanceComponent.value?.fetchBalance()
+}
+
+const handleTransferSuccess = () => {
+  mainnetBalanceComponent.value?.fetchBalance()
 }
 
 const refreshBalances = () => {
